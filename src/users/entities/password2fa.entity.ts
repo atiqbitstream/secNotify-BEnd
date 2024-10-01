@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
 
 @Entity()
-export class password2fa {
+export class Password2fa {
     @PrimaryGeneratedColumn()
     id: number
 
