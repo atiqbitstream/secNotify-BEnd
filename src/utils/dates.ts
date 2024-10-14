@@ -10,11 +10,20 @@ import { EUSTimezones } from "../enums/timezones.enum";
 
 export const MONTH_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
+// * @param fromDate - Unix timestamp representing the start date.
+// * @param toDate - Unix timestamp representing the end date.
+// * @returns An object with 'from' and 'to' properties, each containing a Date object.
+
 export function generateDateRange(fromDate: number, toDate: number): { from: Date; to: Date } {
   const to = new Date(toDate);
   const from = new Date(fromDate);
   return { from, to };
 }
+
+
+// The function extracts the year, month, and day from the Date object in UTC.
+//  This means it disregards your local time zone and focuses purely on Coordinated Universal Time (UTC).
+// If the input is a Date object for October 3, 2024, the function will return the string "2024-10-03".
 
 export function getDateString(datetime: Date): string {
   if (typeof datetime !== "string") {
@@ -187,7 +196,7 @@ export function getDateDifference(toDate: Date, fromDate: Date): number {
   if (toDate && !(toDate instanceof Date)) {
     toDate = new Date(toDate);
   }
-
+z
   if (fromDate && !(fromDate instanceof Date)) {
     fromDate = new Date(fromDate);
   }
