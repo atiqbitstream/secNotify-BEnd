@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm"
+import { User } from "./user.entity";
 
 @Entity()
 export class Token {
@@ -17,7 +18,8 @@ export class Token {
     @Column()
     sessionId:string;
 
-   
+   @ManyToOne(()=>User,user=>user.tokens)
+    user:User
 
 
 }

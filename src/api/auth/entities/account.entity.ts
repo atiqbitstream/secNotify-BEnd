@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from "typeorm"
+import { User } from "./user.entity";
 
 @Entity()
 export class Account {
@@ -22,6 +24,9 @@ export class Account {
 
     @Column()
     password: string;
+
+    @OneToOne(()=>User,user=>user.account)
+    user:User
 
 
 }

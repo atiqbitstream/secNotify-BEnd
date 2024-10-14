@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm"
+import { User } from "./user.entity"
 
 @Entity()
 export class Password2fa {
@@ -11,6 +12,7 @@ export class Password2fa {
     @Column()
     newPasswordHash: string
 
-
+    @ManyToOne(()=>User,user=>user.password2fa)
+    user:User
 
 }

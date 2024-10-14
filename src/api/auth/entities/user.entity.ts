@@ -1,4 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, OneToMany } from "typeorm"
+import { Account } from "./account.entity"
+import { Password2fa } from "./password2fa.entity"
+import { Token } from "./token.entity"
 
 @Entity()
 export class User {
@@ -37,5 +40,14 @@ export class User {
 
     @Column()
     canReceiveSms:boolean;
+
+    @OneToOne(()=>Account,account=>account.user)
+    account:Account;
+
+    @OneToMany(()=>Password2fa,password2fa=>password2fa.user)
+    password2fa:Password2fa[]
+
+    @OneToMany(()=>Token,token=>token.user)
+    tokens:Token[]
 
 }
