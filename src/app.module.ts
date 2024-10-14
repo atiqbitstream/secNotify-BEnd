@@ -1,18 +1,17 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import "reflect-metadata"
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
+import { FakerModule } from './faker/faker.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [
+  imports: [UsersModule, AuthModule, FakerModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule.forRoot({
         isGlobal:true,
-        envFilePath:".local.env",
-        // envFilePath:".prod.env",
-        
       })],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
@@ -26,7 +25,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       }),
       inject: [ConfigService],
     }),
-  
   ],
   controllers: [AppController],
   providers: [AppService],
