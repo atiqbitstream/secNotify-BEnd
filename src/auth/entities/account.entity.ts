@@ -1,6 +1,6 @@
 import { User } from "src/users/entities/user.entity";
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from "typeorm"
-import { Password2fa } from "./password2fa.entity";
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from "typeorm"
+
 
 @Entity()
 export class Account {
@@ -28,7 +28,8 @@ export class Account {
     @OneToOne(()=>User,(user)=>user.account)
     user:User;
 
-    @OneToOne(()=>Password2fa,(passowrd2fa)=>passowrd2fa.account)
-    password2fa:Password2fa;
+    // @OneToOne(()=>Password2fa,(password2fa)=>password2fa.account)
+    // @JoinColumn()
+    // password2fa:Password2fa;
 
 }
