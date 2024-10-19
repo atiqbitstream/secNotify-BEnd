@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ERole } from "../enums/roles.enum";
 import { Token } from "src/auth/entities/token.entity";
 import { Account } from "src/auth/entities/account.entity";
@@ -24,9 +24,6 @@ export class User {
 
   @Column({ type: 'enum', enum: ERole })
   role: ERole;
- 
-  @Column()
-  password:string;
 
   @Column({ nullable: true })
 
@@ -40,6 +37,7 @@ export class User {
      tokens:Token[];
 
   @OneToOne(()=>Account,(account)=>account.user)
+  @JoinColumn()
      account:Account;
   
 }
