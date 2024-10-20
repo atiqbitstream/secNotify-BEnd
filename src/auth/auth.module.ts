@@ -1,3 +1,4 @@
+
 import { PassportModule } from '@nestjs/passport';
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -6,14 +7,22 @@ import { LocalStrategy } from './local.strategy';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { JwtStrategy } from './jwt.strategy';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Account } from './entities/account.entity';
+import { TokenService } from './services/token.service';
+import { TokenRepository } from './token.repository';
+import { AuthController } from './auth.controller';
+import { Token } from './entities/token.entity';
 
 
 @Module({
-  imports: [UsersModule, PassportModule,JwtModule.register({
-    secret: jwtConstants.secret,
-    signOptions: { expiresIn: '60s' },
+  imports: [ TypeOrmModule.forFeature([Account,TokenRepository,Token]) ,
+    UsersModule, PassportModule,JwtModule.register({
   }),],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  // Register Account entity and repository
+  providers: [AuthService, LocalStrategy, JwtStrategy,TokenService],
+  controllers:[AuthController],
   exports:[AuthService]
 })
 export class AuthModule {}
+

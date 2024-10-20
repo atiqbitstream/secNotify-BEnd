@@ -1,3 +1,4 @@
+
 import { User } from "src/users/entities/user.entity";
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from "typeorm"
 
@@ -7,19 +8,19 @@ export class Account {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({nullable:true})
     resetPasswordToken: string;
 
-    @Column()
+    @Column({nullable:true})
     resetPasswordExpires: Date
 
-    @Column()
+    @Column({nullable:true})
     failedLoginAttempts: number;
 
-    @Column()
+    @Column({nullable:true})
     blockedUntil: Date;
 
-    @Column()
+    @Column({nullable:true})
     lastFailedLogin: Date;
 
     @Column()
@@ -33,3 +34,4 @@ export class Account {
     // password2fa:Password2fa;
 
 }
+

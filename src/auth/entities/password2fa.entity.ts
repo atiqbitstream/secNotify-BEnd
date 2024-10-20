@@ -1,3 +1,4 @@
+/*
 // import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, JoinColumn } from "typeorm"
 // import { Account } from "./account.entity"
 
@@ -18,3 +19,4 @@
 
 
 // }
+*/

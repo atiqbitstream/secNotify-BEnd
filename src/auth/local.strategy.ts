@@ -1,3 +1,4 @@
+
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
@@ -9,14 +10,15 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     super();
   }
 
-  async validate(username: string, password: string): Promise<any> {
-    console.log("hi i am local auth vlaidate param vlaues", username, password)
-    const user = await this.authService.validateUser(username, password);
+  // async validate(username: string, password: string): Promise<any> {
+  //   console.log("hi i am local auth vlaidate param vlaues", username, password)
+  //   const user = await this.authService.validateUser(username, password);
 
-    console.log("Hi! i am printing user from local strategy(validate func) : ",user)
-    if (!user) {
-      throw new UnauthorizedException();
-    }
-    return user;
-  }
+  //   console.log("Hi! i am printing user from local strategy(validate func) : ",user)
+  //   if (!user) {
+  //     throw new UnauthorizedException();
+  //   }
+  //   return user;
+  // }
 }
+
