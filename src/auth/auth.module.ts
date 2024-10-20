@@ -3,7 +3,6 @@ import { PassportModule } from '@nestjs/passport';
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersModule } from 'src/users/users.module';
-import { LocalStrategy } from './local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -19,7 +18,7 @@ import { Token } from './entities/token.entity';
     UsersModule, PassportModule,JwtModule.register({
   }),],
   // Register Account entity and repository
-  providers: [AuthService, LocalStrategy, JwtStrategy,TokenService,TokenRepository],
+  providers: [AuthService, JwtStrategy,TokenService,TokenRepository],
   controllers:[AuthController],
   exports:[AuthService,TokenService]
 })
