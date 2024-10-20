@@ -20,9 +20,9 @@ import { Token } from './entities/token.entity';
     UsersModule, PassportModule,JwtModule.register({
   }),],
   // Register Account entity and repository
-  providers: [AuthService, LocalStrategy, JwtStrategy,TokenService],
+  providers: [AuthService, LocalStrategy, JwtStrategy,TokenService,TokenRepository],
   controllers:[AuthController],
-  exports:[AuthService]
+  exports:[AuthService,TokenService]
 })
 export class AuthModule {}
 
