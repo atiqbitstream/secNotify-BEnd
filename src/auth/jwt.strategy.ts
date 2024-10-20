@@ -1,23 +1,31 @@
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { jwtConstants } from './constants';
-import { UsersService } from 'src/users/users.service';
+import { PassportStrategy } from '@nestjs/passport';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { ConfigService } from '@nestjs/config'; // Import ConfigService
+import { AuthService } from './auth.service';
+import { User } from '../users/entities/user.entity';
+import { ERole } from 'src/users/enums/roles.enum';
+
+export interface JwtPayload {
+  id: string;
+  role: ERole;
+  email: string;
+}
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private userService:UsersService) {
+  constructor(
+    private authService: AuthService,
+    private readonly configService: ConfigService // Ensure correct injection syntax
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: false,
-      secretOrKey: jwtConstants.secret,
+      ignoreExpiration: true,
+      secretOrKey: configService.get<string>('JWT_ACCESS_SECRET'),  // Correct configService usage
     });
   }
 
-  async validate(payload: any) {
-    const user = await this.userService.findOne(payload.username);  // Fetches the user with roles and permissions
-    console.log("Hi! i am extracting payload data from jwt strategy(validate func) : ",payload);
-    
-    return user;
+  async validate(payload: JwtPayload): Promise<User> {
+    return this.authService.validateUser(payload);
   }
-}     
+}

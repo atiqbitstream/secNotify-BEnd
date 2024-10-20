@@ -1,3 +1,4 @@
+
 import { User } from "src/users/entities/user.entity";
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, JoinColumn } from "typeorm"
 import { Account } from "./account.entity";
@@ -26,3 +27,4 @@ export class Token {
     
 
 }
+

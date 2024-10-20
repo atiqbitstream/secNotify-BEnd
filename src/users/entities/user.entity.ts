@@ -36,7 +36,7 @@ export class User {
   @OneToMany(()=>Token,(token)=>token.user)
      tokens:Token[];
 
-  @OneToOne(()=>Account,(account)=>account.user)
+  @OneToOne(()=>Account,(account)=>account.user,{cascade:true})
   @JoinColumn()
      account:Account;
   
