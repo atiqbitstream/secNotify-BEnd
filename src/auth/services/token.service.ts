@@ -142,7 +142,7 @@ export class TokenService {
     await this.tokenRepository.removeTokens(refreshToken);
   }
 
-//   async removeOtherTokensOnLogin(sessionId: string, userId: string): Promise<any> {
-//     return this.tokenRepository.removeOtherTokens(sessionId, userId);
-//   }
+  async removeOtherTokensOnLogin(sessionId: string, userId: number): Promise<any> {
+    return this.tokenRepository.removeOtherTokens(sessionId, userId);
+  }
 }

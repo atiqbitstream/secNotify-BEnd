@@ -6,6 +6,7 @@ import { TokenService } from '../services/token.service';
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
   constructor(private readonly tokenService: TokenService) {
+    console.log('AuthService instantiated with TokenService:', tokenService);
     super();
   }
 
@@ -27,7 +28,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
         const result = await this.tokenService.findTokenAndCheckIfExpire(token);
 
         console.log("jwt auth guard => this is the result of try block : ",result);
-        
+
     } catch (error) {
         console.error('Error fetching token:', error);
     }
