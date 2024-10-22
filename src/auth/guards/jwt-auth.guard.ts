@@ -12,13 +12,25 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     try {
       const httpReq: Request = context.switchToHttp().getRequest();
+
+      console.log("jwt auth guard => http request : ", httpReq.rawHeaders)
+
       const token = httpReq.headers?.authorization?.split(' ')[1];
+
+      console.log("jwt auth guard => token", token)
       
       if (!token) {
         throw new UnauthorizedException('Invalid credentials');
       }
       
-      await this.tokenService.findTokenAndCheckIfExpire(token);
+      try {
+        const result = await this.tokenService.findTokenAndCheckIfExpire(token);
+
+        console.log("jwt auth guard => this is the result of try block : ",result);
+        
+    } catch (error) {
+        console.error('Error fetching token:', error);
+    }
 
       return super.canActivate(context) as Promise<boolean>;
     } catch (error) {

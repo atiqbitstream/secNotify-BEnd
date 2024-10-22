@@ -72,6 +72,8 @@ export class TokenService {
     try {
       const tokenDoc = await this.tokenRepository.findOne({ where: { token }, relations: ['user'] });
 
+      console.log(" tokenDoc : ",tokenDoc)
+
       if (!tokenDoc) {
         throw new UnauthorizedException('Invalid credentials');
       }
