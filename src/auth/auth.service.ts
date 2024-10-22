@@ -67,7 +67,7 @@ async login({ email, password }: Credentials): Promise<UserLogin> {
   console.log({ message: `Logging user ${email}` });
   const tokens = await this.tokenService.create(user);
 
-  // await this.tokenService.removeOtherTokensOnLogin(tokens.sessionId, user.id);
+  await this.tokenService.removeOtherTokensOnLogin(tokens.sessionId, user.id);
 
 
   delete tokens.sessionId;

@@ -34,31 +34,31 @@ export class TokenRepository extends Repository<Token> {
     });
   }
 
-//   async removeOtherTokens(sessionId: string, userId: string): Promise<any> {
-//     try {
-//       this.logger.log(`TokenRepository, Attempting to remove tokens for userId: ${userId}`);
-//       const accessTokens = [];
+  async removeOtherTokens(sessionId: string, userId: number): Promise<any> {
+    try {
+      console.log(`TokenRepository, Attempting to remove tokens for userId: ${userId}`);
+      const accessTokens = [];
 
-//       await this.manager.transaction(async (manager) => {
-//         const existingTokens = await manager.find(Token, { where: { sessionId: Not(sessionId), userId } });
-//         this.logger.log(`TokenRepository, Found ${existingTokens?.length} tokens for userId: ${userId}`);
+      await this.manager.transaction(async (manager) => {
+        const existingTokens = await manager.find(Token, { where: { sessionId: Not(sessionId), user:{id:userId} } });
+        console.log(`TokenRepository, Found ${existingTokens?.length} tokens for userId: ${userId}`);
 
-//         for (const token of existingTokens) {
-//           if (token.tokenType === ETokenType.ACCESS) {
-//             accessTokens.push(token.token);
-//           }
+        for (const token of existingTokens) {
+          if (token.tokenType === ETokenType.ACCESS) {
+            accessTokens.push(token.token);
+          }
 
-//           this.logger.log(`TokenRepository, Removing token: ${token.token} for userId: ${userId}`);
-//           await manager.remove(token, { listeners: false, data: token.user });
-//         }
+          console.log(`TokenRepository, Removing token: ${token.token} for userId: ${userId}`);
+          await manager.remove(token, { listeners: false, data: token.user });
+        }
 
-//         this.logger.log(`TokenRepository, Removed ${existingTokens.length} tokens for userId: ${userId} successfully.`);
-//       });
+        console.log(`TokenRepository, Removed ${existingTokens.length} tokens for userId: ${userId} successfully.`);
+      });
 
-//       return accessTokens;
-//     } catch (err) {
-//       this.logger.error(`TokenRepository, removeOtherTokens => ${err.message}`, err.stack);
-//       console.log("TokenRepository, removeOtherTokens => ", err);
-//     }
-//   }
+      return accessTokens;
+    } catch (err) {
+      console.error(`TokenRepository, removeOtherTokens => ${err.message}`, err.stack);
+      console.log("TokenRepository, removeOtherTokens => ", err);
+    }
+  }
 }

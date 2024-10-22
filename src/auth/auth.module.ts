@@ -18,7 +18,7 @@ import { Token } from './entities/token.entity';
     UsersModule, PassportModule,JwtModule.register({
   }),],
   // Register Account entity and repository
-  providers: [AuthService, JwtStrategy,TokenService,TokenRepository],
+  providers: [AuthService, JwtStrategy,TokenService],
   controllers:[AuthController],
   exports:[AuthService,TokenService]
 })
