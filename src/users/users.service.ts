@@ -1,3 +1,4 @@
+import { CurrentUser } from './../auth/decorators/current-user.decorator';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -7,6 +8,8 @@ import * as bcrypt from 'bcryptjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Account } from 'src/auth/entities/account.entity';
 import { generateResetPasswordToken, generateResetPasswordTokenExpirationDate } from 'src/utils/rest-password-helper';
+import { error } from 'console';
+import { Token } from 'src/auth/entities/token.entity';
 
 
 @Injectable()
@@ -14,8 +17,8 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    @InjectRepository(Account)
-    private accountsRepository: Repository<Account>,
+    @InjectRepository(Token)
+    private tokensRepository: Repository<Token>,
   ) {}
   
   async findOne(identifier: string): Promise<User | undefined> {
@@ -75,5 +78,42 @@ export class UsersService {
 
     return account;
 
+  }
+
+  async logoutUser(currentUser:User)
+  {
+
+   try
+   {
+    const targetUser = await this.usersRepository.findOne({
+      where: { id: currentUser.id},
+      relations: ['tokens'], // Ensure tokens are loaded
+    });
+
+    if (!currentUser) {
+      throw new Error('User not found');
+    }
+    const tokensToRemove = targetUser.tokens;
+
+    console.log("tokens to be removed =>",tokensToRemove)
+
+    if(tokensToRemove.length===0)
+    {
+      throw new error("no tokens to remove")
+    }
+
+    for(const token of tokensToRemove)
+    {
+      const tokenRemove=await this.tokensRepository.findOneBy({id:token.id})
+      if(tokenRemove)
+      {
+        await this.tokensRepository.remove(tokenRemove);
+      }
+    }
+   }
+   catch(error)
+   {
+    console.error('error during logout : ', error);
+   }
   }
 }

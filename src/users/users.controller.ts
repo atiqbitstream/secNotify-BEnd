@@ -32,7 +32,12 @@ getProfile(@Request() req):User
 }
 
 
-
+@Post('logout')
+logOut(@Request() req)
+{
+  console.log("req user obejct in controller =>",req.user)
+       return this.usersService.logoutUser(req.user);
+}
 
 
 }
