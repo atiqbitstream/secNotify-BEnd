@@ -6,7 +6,7 @@ import { addSeconds } from 'src/utils/dates';
 import { Token } from '../entities/token.entity';
 import { LessThan } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
-import { TokenRepository } from '../token.repository';
+import { TokenRepository } from '../repos/token.repository';
 import { User } from '../../users/entities/user.entity';
 import { ETokenType } from '../enums/token-type.enum';
 import { DayInMilliseconds } from 'src/utils/constants';
