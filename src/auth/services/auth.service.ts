@@ -1,17 +1,17 @@
 
 
-import { UsersService } from './../users/users.service';
+import { UsersService } from '../../users/users.service';
 import * as bcrypt from 'bcryptjs';
 import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Credentials } from './dtos/auth-user.dto';
+import { Credentials } from '../dtos/auth-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Account } from './entities/account.entity';
-import { TokenService } from './services/token.service';
+import { Account } from '../entities/account.entity';
+import { TokenService } from './token.service';
 import { UserDto } from 'src/users/dto/User.dto';
-import { UserLogin } from './user-login';
-import { JwtPayload } from './jwt.strategy';
+import { UserLogin } from '../user-login';
+import { JwtPayload } from '../strategies/jwt.strategy';
 import { User } from 'src/users/entities/user.entity';
 
 

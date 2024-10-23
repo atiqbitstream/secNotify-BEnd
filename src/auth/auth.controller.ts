@@ -1,6 +1,6 @@
 import { UsersService } from 'src/users/users.service';
 import { Body, Controller, Post, Req } from "@nestjs/common";
-import { AuthService } from "./auth.service";
+import { AuthService } from "./services/auth.service";
  import { Request  } from '@nestjs/common';
 import { CreateUserDto } from "src/users/dto/create-user.dto";
 

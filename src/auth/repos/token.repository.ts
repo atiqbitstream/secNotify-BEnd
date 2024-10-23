@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { Token } from "./entities/token.entity";
+import { Token } from "../entities/token.entity";
 import { DataSource, EntityRepository, Not, Repository } from "typeorm";
-import { ETokenType } from "./enums/token-type.enum";
+import { ETokenType } from "../enums/token-type.enum";
 
 @Injectable()
 
