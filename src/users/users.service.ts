@@ -87,7 +87,7 @@ export class UsersService {
    {
     const targetUser = await this.usersRepository.findOne({
       where: { id: currentUser.id},
-      relations: ['tokens'], // Ensure tokens are loaded
+      relations: ['tokens'], 
     });
 
     if (!currentUser) {
