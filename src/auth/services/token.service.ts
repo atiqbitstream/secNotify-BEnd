@@ -145,4 +145,9 @@ export class TokenService {
   async removeOtherTokensOnLogin(sessionId: string, userId: number): Promise<any> {
     return this.tokenRepository.removeOtherTokens(sessionId, userId);
   }
+
+  async verifyToken()
+  {
+       return true;
+  }
 }
