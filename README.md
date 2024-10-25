@@ -225,7 +225,7 @@ To run this project, you will need to add the following environment variables to
 -   User and Organization Management
 -   Guard and Decorator Support (e.g., `JwtAuthGuard`, `RolesGuard`)
 
-4o
+
 
 ## Feedback
 
