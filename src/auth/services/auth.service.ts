@@ -2,7 +2,7 @@
 
 import { UsersService } from '../../users/users.service';
 import * as bcrypt from 'bcryptjs';
-import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Credentials } from '../dtos/auth-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -48,28 +48,27 @@ private accountsRepository: Repository<Account>,private userService:UsersService
 //   }
 
 async login({ email, password }: Credentials): Promise<UserLogin> {
-  
   const user = await this.userService.findOne(email);
-
-  // if (!user?.account?.password) {
-  //   throw new ForbiddenException("Invalid credentials. Try to reset password");
-  // }
 
   user.account.failedLoginAttempts = 0;
   user.account.blockedUntil = null;
   user.account.lastFailedLogin = null;
-
-  // TODO: get user permission from permission table on the basis of user role & id
-  //user.permission = {hoList: ['bb2737cf-7219-4534-a2d5-4947e8dfd2d1']};
-
   await this.accountsRepository.save(user.account, { data: user });
 
-  console.log({ message: `Logging user ${email}` });
-  const tokens = await this.tokenService.create(user);
+  console.log(`Logging in user with email: ${email}`);
+  let tokens;
+
+  try {
+    tokens = await this.tokenService.create(user);
+    if (!tokens.sessionId) {
+      throw new Error("Session ID was not generated successfully.");
+    }
+  } catch (error) {
+    console.error("Error creating tokens:", error);
+    throw new InternalServerErrorException("Token creation failed.");
+  }
 
   await this.tokenService.removeOtherTokensOnLogin(tokens.sessionId, user.id);
-
-
   delete tokens.sessionId;
 
   return { ...tokens, user: UserDto.fromEntity(user) };
