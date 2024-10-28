@@ -1,4 +1,4 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { createTokenDto } from '../dtos/create-token.dto';
@@ -64,6 +64,7 @@ export class TokenService {
       };
     } catch (err) {
       console.log('TokenService, create =>', err);
+      throw new InternalServerErrorException("Error generating tokens.");
  
     }
   }
