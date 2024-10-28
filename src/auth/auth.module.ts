@@ -14,11 +14,11 @@ import { Token } from './entities/token.entity';
 
 
 @Module({
-  imports: [ TypeOrmModule.forFeature([Account,TokenRepository,Token]) ,
+  imports: [ TypeOrmModule.forFeature([Account,TokenRepository,Token, TokenRepository]) ,
     UsersModule, PassportModule,JwtModule.register({
   }),],
   // Register Account entity and repository
-  providers: [AuthService, JwtStrategy,TokenService],
+  providers: [AuthService, JwtStrategy,TokenService,TokenRepository],
   controllers:[AuthController],
   exports:[AuthService,TokenService]
 })
