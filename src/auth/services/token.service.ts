@@ -149,6 +149,7 @@ export class TokenService {
 
   async verifyToken()
   {
+    console.log(" i have hit verifytoken method in 'securenotify'")
        return true;
   }
 }
