@@ -1,5 +1,5 @@
 import { UsersService } from 'src/users/users.service';
-import { Body, Controller, Post, Req, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Post, Req,Headers, Res, UseGuards, HttpException, HttpStatus } from "@nestjs/common";
 import { AuthService } from "./services/auth.service";
  import { Request  } from '@nestjs/common';
  import { response, Response } from 'express';
@@ -25,9 +25,28 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('verifyToken')
-  async verifyToken()
+  async verifyToken(@Headers('Authorization') authorization:string)
   {
-    return this.tokenService.verifyToken();
+    if(!authorization)
+    {
+      throw new HttpException('Authorization header missing', HttpStatus.BAD_REQUEST)
+    }
+
+    const token=authorization.split(' ')[1];
+
+    if(!token)
+    {
+      throw new HttpException('Invalid token format', HttpStatus.BAD_REQUEST);
+    }
+
+    try{
+      const decodedToken = await this.tokenService.verifyToken(token);
+      return decodedToken;
+    }
+    catch(error)
+    {
+      throw new HttpException('Token verification failed', HttpStatus.UNAUTHORIZED)
+    }
   }
 
 
