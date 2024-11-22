@@ -116,4 +116,16 @@ export class UsersService {
     console.error('error during logout : ', error);
    }
   }
+
+
+  //this function is just for faker service to delete all created users
+  
+  // async deleteUserById(userId: number): Promise<void> {
+  //   const user = await this.usersRepository.findOne({ where: { id: userId } });
+  //   if (!user) {
+  //     throw new Error('User not found');
+  //   }
+  //   await this.usersRepository.remove(user);
+  // }
+  
 }

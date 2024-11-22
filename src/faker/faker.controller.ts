@@ -12,4 +12,11 @@ export class FakerController {
   {
     return await this.fakerService.setUpForDemo();
   }
+
+
+  // @Delete('deleteAll')
+  // async depopulateDb()
+  // {
+  //   return await this.fakerService.deleteDemoUsers();
+  // }
 }
