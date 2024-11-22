@@ -147,9 +147,23 @@ export class TokenService {
     return this.tokenRepository.removeOtherTokens(sessionId, userId);
   }
 
-  async verifyToken()
+  async verifyToken(accessToken:string)
   {
     console.log(" i have hit verifytoken method in 'securenotify'")
-       return true;
+      
+      const accessSecret =this.configService.get<string>('JWT_ACCESS_SECRET');
+  
+    try {
+       const decodeToken = this.jwtService.verify(accessToken,{secret:accessSecret});
+
+       return decodeToken
+       
+    }
+    catch(error)
+    {
+      console.error('Token verification failed : ', error);
+      return null;
+    }
+  
   }
 }

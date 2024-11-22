@@ -22,7 +22,7 @@ export class RolesGuard implements CanActivate {
 
     const { user } = context.switchToHttp().getRequest();
 
-    console.log(" thie is {user} object : ",{user})
+    console.log(" thie is {user} object from SNB Role guard  : ",{user})
     const isRoleMatched = requiredRoles.some((role) => user.role === role);
 
     console.log("is role matched : ",isRoleMatched)
