@@ -229,11 +229,11 @@ To run this project, you will need to add the following environment variables to
 
 ## Feedback
 
-If you have any feedback, please reach out to me at https://www.linkedin.com/in/atiq-ur-rehman-1314712aa/
+If you have any feedback, please reach out to me at 
 
 
 
-# Hi, I'm Atiq Ur Rehman! 👋
+# Hi, I'm Atiq Khan! 👋
 
 
 ## 🔗 Links
