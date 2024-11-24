@@ -237,8 +237,8 @@ If you have any feedback, please reach out to me at https://www.linkedin.com/in/
 
 
 ## 🔗 Links
-[![portfolio](https://img.shields.io/badge/my_portfolio-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://github.com/AtiqBytes)
-[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/atiq-ur-rehman-1314712aa/)
+[![portfolio](https://img.shields.io/badge/my_portfolio-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://github.com/atiqbitstream)
+[![linkedin]()
 
 
 
@@ -286,7 +286,7 @@ test coverage:
 Clone the project
 
 ```bash
-  git clone https://github.com/AtiqBytes/passport-jwt-nestjs.git
+  git clone https://github.com/atiqbitstream/passport-jwt-nestjs.git
 ```
 
 Go to the project directory
