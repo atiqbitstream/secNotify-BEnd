@@ -22,6 +22,9 @@ export class UsersController {
      return this.usersService.createUser(createUserDto);
   }
 
+
+  @UseGuards(RolesGuard)
+  @Roles(ERole.ADMIN)
   @Post('createAsRider')
   async createRider(@Body() createUserDto:CreateUserDto,@Request() req)
   {

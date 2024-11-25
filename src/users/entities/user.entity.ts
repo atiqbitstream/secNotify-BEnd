@@ -19,7 +19,7 @@ export class User {
   @Column({ type: 'varchar', length: 150 })
   lastName: string;
 
-  @Column()
+  @Column({nullable:true})
   phoneNumber: string;
 
   @Column({ nullable: true })
