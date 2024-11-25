@@ -48,7 +48,13 @@ export class UsersService {
   
 
   async createUser(newUser: CreateUserDto): Promise<User> {
+
+    if (!newUser.password || typeof newUser.password !== 'string') {
+      throw new Error('Password must be a valid string');
+  }
+  
     const salt = await bcrypt.genSalt();
+
     console.log("hi I am salt here: ", salt);
     const hashedPassword = await bcrypt.hash(newUser.password, salt);
   
