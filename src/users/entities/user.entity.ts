@@ -19,6 +19,18 @@ export class User {
   @Column({ type: 'varchar', length: 150 })
   lastName: string;
 
+  @Column({ nullable: true })
+  address: string;
+
+  @Column({ nullable: true })
+  sector: string;
+
+  @Column({ nullable: true })
+  street: string;
+
+  @Column({ nullable: true })
+  cnicNumber: string;
+
   @Column({ nullable: true, type: 'varchar', length: 150 })
   email: string;
 
