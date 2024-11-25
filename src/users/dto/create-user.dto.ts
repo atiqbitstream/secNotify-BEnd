@@ -6,6 +6,11 @@ export class CreateUserDto {
   firstName: string;
   lastName: string;
   email: string;
+  phoneNumber?: string;
+  address?: string;
+  sector?: string;
+  street?: string;
+  cnicNumber?: string;
   role: ERole;
   password: string;
   organizationId: string;
