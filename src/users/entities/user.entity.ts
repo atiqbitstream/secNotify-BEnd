@@ -19,6 +19,9 @@ export class User {
   @Column({ type: 'varchar', length: 150 })
   lastName: string;
 
+  @Column()
+  phoneNumber: string;
+
   @Column({ nullable: true })
   address: string;
 
