@@ -22,6 +22,12 @@ export class UsersController {
      return this.usersService.createUser(createUserDto);
   }
 
+  @Post('createAsRider')
+  async createRider(@Body() createUserDto:CreateUserDto,@Request() req)
+  {
+     return this.usersService.createUser(createUserDto);
+  }
+
 
 @Get('profile')
 @UseGuards(RolesGuard)
