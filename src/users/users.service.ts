@@ -123,6 +123,11 @@ export class UsersService {
    }
   }
 
+  getRider(id: number) {
+    return this.usersRepository.findOneBy({
+      id
+    })
+  }
 
   //this function is just for faker service to delete all created users
   

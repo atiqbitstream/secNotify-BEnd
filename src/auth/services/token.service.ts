@@ -1,4 +1,10 @@
-import { Injectable, InternalServerErrorException, Logger, UnauthorizedException } from '@nestjs/common';
+import { IsEmail } from 'class-validator';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { createTokenDto } from '../dtos/create-token.dto';
@@ -11,27 +17,39 @@ import { User } from '../../users/entities/user.entity';
 import { ETokenType } from '../enums/token-type.enum';
 import { DayInMilliseconds } from 'src/utils/constants';
 import { JwtToken } from '../dtos/jwt-token.dto';
+import { promises } from 'dns';
 
 @Injectable()
 export class TokenService {
-
   constructor(
     private tokenRepository: TokenRepository,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
   ) {}
 
   async create(user: User): Promise<JwtToken> {
     try {
       const accessSecret = this.configService.get<string>('JWT_ACCESS_SECRET');
-  const refreshSecret = this.configService.get<string>('JWT_REFRESH_SECRET');
-  const accessExpiration = this.configService.get<number>('JWT_ACCESS_EXPIRATION');
-  const refreshExpiration = this.configService.get<number>('JWT_REFRESH_EXPIRATION');
+      const refreshSecret =
+        this.configService.get<string>('JWT_REFRESH_SECRET');
+      const accessExpiration = this.configService.get<number>(
+        'JWT_ACCESS_EXPIRATION',
+      );
+      const refreshExpiration = this.configService.get<number>(
+        'JWT_REFRESH_EXPIRATION',
+      );
 
-  // Check if all required secrets and expiration values are available
-  if (!accessSecret || !refreshSecret || !accessExpiration || !refreshExpiration) {
-    throw new Error('JWT secrets or expiration times are not defined in the configuration.');
-  }
+      // Check if all required secrets and expiration values are available
+      if (
+        !accessSecret ||
+        !refreshSecret ||
+        !accessExpiration ||
+        !refreshExpiration
+      ) {
+        throw new Error(
+          'JWT secrets or expiration times are not defined in the configuration.',
+        );
+      }
       const sessionId = uuidv4();
       const payload: Partial<User> = {
         id: user.id,
@@ -44,126 +62,196 @@ export class TokenService {
         ETokenType.ACCESS,
         Number(accessExpiration),
         this.jwtService.sign(payload, { secret: accessSecret }),
-        sessionId
+        sessionId,
       );
       const refreshTokenDto = new createTokenDto(
         user,
         ETokenType.REFRESH,
         Number(refreshExpiration),
         this.jwtService.sign(payload, { secret: refreshSecret }),
-        sessionId
+        sessionId,
       );
       await this.tokenRepository.saveTokens(
         this.tokenRepository.create(accessTokenDto),
-        this.tokenRepository.create(refreshTokenDto)
+        this.tokenRepository.create(refreshTokenDto),
       );
       return {
         accessToken: accessTokenDto.token,
         refreshToken: refreshTokenDto.token,
-        sessionId
+        sessionId,
       };
     } catch (err) {
       console.log('TokenService, create =>', err);
-      throw new InternalServerErrorException("Error generating tokens.");
- 
+      throw new InternalServerErrorException('Error generating tokens.');
     }
   }
 
   async findTokenAndCheckIfExpire(token: string): Promise<Token> {
     try {
-      const tokenDoc = await this.tokenRepository.findOne({ where: { token }, relations: ['user'] });
+      if (!token) {
+        throw new UnauthorizedException('No token provided');
+      }
 
-      console.log(" tokenDoc : ",tokenDoc)
+      const tokenDoc = await this.findTokenInDataBase(token);
+
+      this.validateTokenDoc(tokenDoc);
+
+      return tokenDoc;
+    } catch (error) {
+      this.handleTokenVerificationError(error);
+    }
+  }
+
+  private async findTokenInDataBase(token: string): Promise<Token> {
+    try {
+      const tokenDoc = await this.tokenRepository.findOne({
+        where: { token },
+        relations: ['user'],
+      });
 
       if (!tokenDoc) {
-        throw new UnauthorizedException('Invalid credentials');
+        throw new UnauthorizedException('Token not found in DataBase');
       }
-      // TODO: include date check in db-config.ts query
-      TokenService.isExpired(tokenDoc.expirationTime);
+
       return tokenDoc;
-    }
-    catch (err) {
-      console.log('TokenService, findTokenAndCheckIfExpire =>', err);
-      
+    } catch (error) {
+      console.error('Database token lookup error : ', error);
+      throw new UnauthorizedException('Token lookup failed');
     }
   }
 
-  private static isExpired(expirationTime: Date): void {
+  private validateTokenDoc(tokenDoc: Token): void {
+    if (!tokenDoc.user) {
+      throw new UnauthorizedException('No user associated with Token');
+    }
+
+    if (this.isExpired(tokenDoc.expirationTime)) {
+      throw new UnauthorizedException('Token has expired');
+    }
+  }
+
+  private isExpired(expirationTime: Date): boolean {
+    if (!(expirationTime instanceof Date)) {
+      console.error('Invalid expiration time type : ', typeof expirationTime);
+      return true;
+    }
+
     const now = new Date();
-    if (expirationTime.getTime() < now.getTime()) {
-      throw new UnauthorizedException('Session is expired');
-    }
+    const isExpired = expirationTime.getTime() < now.getTime();
+
+    console.log('Token expiration Analysis : ', {
+      currentTime: now,
+      expirationTime: expirationTime,
+      isExpired: isExpired,
+    });
+
+    return isExpired;
   }
 
-//   async update(oldRefreshToken: string, customPayload: Partial<LogInAsJwtPayload>): Promise<JwtToken> {
-//     try {
-//       const { accessSecret, refreshSecret, accessExpiration, refreshExpiration } = this.configService.get('jwt');
-//       const refreshTokenDoc = await this.findTokenAndCheckIfExpire(oldRefreshToken);
+  private handleTokenVerificationError(error: any) {
+    if (error instanceof UnauthorizedException) {
+      throw error;
+    }
 
-//       let accessTokenDoc = await this.tokenRepository.findOneBy({
-//         sessionId: refreshTokenDoc.sessionId,
-//         tokenType: ETokenType.ACCESS
-//       });
+    console.error('unexpected token verification error', error);
+    throw new UnauthorizedException('Token verification failed');
+  }
+  //   async update(oldRefreshToken: string, customPayload: Partial<LogInAsJwtPayload>): Promise<JwtToken> {
+  //     try {
+  //       const { accessSecret, refreshSecret, accessExpiration, refreshExpiration } = this.configService.get('jwt');
+  //       const refreshTokenDoc = await this.findTokenAndCheckIfExpire(oldRefreshToken);
 
-//       if (!accessTokenDoc) {
-//         const accessDto = new createTokenDto(
-//           refreshTokenDoc.user,
-//           ETokenType.ACCESS,
-//           Number(accessExpiration),
-//           this.jwtService.sign(customPayload, { secret: accessSecret }),
-//           refreshTokenDoc.sessionId
-//         );
+  //       let accessTokenDoc = await this.tokenRepository.findOneBy({
+  //         sessionId: refreshTokenDoc.sessionId,
+  //         tokenType: ETokenType.ACCESS
+  //       });
 
-//         accessTokenDoc = this.tokenRepository.create(accessDto);
-//       }
+  //       if (!accessTokenDoc) {
+  //         const accessDto = new createTokenDto(
+  //           refreshTokenDoc.user,
+  //           ETokenType.ACCESS,
+  //           Number(accessExpiration),
+  //           this.jwtService.sign(customPayload, { secret: accessSecret }),
+  //           refreshTokenDoc.sessionId
+  //         );
 
-//       const now = new Date();
-//       refreshTokenDoc.token = this.jwtService.sign(customPayload, { secret: refreshSecret });
-//       refreshTokenDoc.expirationTime = addSeconds(now, refreshExpiration);
+  //         accessTokenDoc = this.tokenRepository.create(accessDto);
+  //       }
 
-//       accessTokenDoc.token = this.jwtService.sign(customPayload, { secret: accessSecret });
-//       accessTokenDoc.expirationTime = addSeconds(now, accessExpiration);
+  //       const now = new Date();
+  //       refreshTokenDoc.token = this.jwtService.sign(customPayload, { secret: refreshSecret });
+  //       refreshTokenDoc.expirationTime = addSeconds(now, refreshExpiration);
 
-//       await this.tokenRepository.saveTokens(accessTokenDoc, refreshTokenDoc);
-//       return { accessToken: accessTokenDoc.token, refreshToken: refreshTokenDoc.token };
-//     } catch (err) {
-//       console.log('TokenService, Updation =>', err);
-//       this.logger.error(`TokenService Updation => ${err.message}`, err.stack);
-//     }
-//   }
+  //       accessTokenDoc.token = this.jwtService.sign(customPayload, { secret: accessSecret });
+  //       accessTokenDoc.expirationTime = addSeconds(now, accessExpiration);
 
-//   @Cron(CronExpression.EVERY_DAY_AT_9AM)
-//   async deleteExpiredTokens(): Promise<void> {
-//     const expiredForWeek = new Date(new Date().getTime() - DayInMilliseconds);
-//     const tokens = await this.tokenRepository.findBy({ expirationTime: LessThan(expiredForWeek) });
-//     await this.tokenRepository.remove(tokens);
-//   }
+  //       await this.tokenRepository.saveTokens(accessTokenDoc, refreshTokenDoc);
+  //       return { accessToken: accessTokenDoc.token, refreshToken: refreshTokenDoc.token };
+  //     } catch (err) {
+  //       console.log('TokenService, Updation =>', err);
+  //       this.logger.error(`TokenService Updation => ${err.message}`, err.stack);
+  //     }
+  //   }
+
+  //   @Cron(CronExpression.EVERY_DAY_AT_9AM)
+  //   async deleteExpiredTokens(): Promise<void> {
+  //     const expiredForWeek = new Date(new Date().getTime() - DayInMilliseconds);
+  //     const tokens = await this.tokenRepository.findBy({ expirationTime: LessThan(expiredForWeek) });
+  //     await this.tokenRepository.remove(tokens);
+  //   }
 
   async removeTokensOnLogout(refreshToken: string): Promise<void> {
     await this.tokenRepository.removeTokens(refreshToken);
   }
 
-  async removeOtherTokensOnLogin(sessionId: string, userId: number): Promise<any> {
+  async removeOtherTokensOnLogin(
+    sessionId: string,
+    userId: number,
+  ): Promise<any> {
     return this.tokenRepository.removeOtherTokens(sessionId, userId);
   }
 
-  async verifyToken(accessToken:string)
-  {
-    console.log(" i have hit verifytoken method in 'securenotify'")
-      
-      const accessSecret =this.configService.get<string>('JWT_ACCESS_SECRET');
-  
-    try {
-       const decodeToken = this.jwtService.verify(accessToken,{secret:accessSecret});
+  async verifyToken(accessToken: string) {
+    console.log('===== SNB Token Verification START =====');
+    console.log('Input Token: ', accessToken);
 
-       return decodeToken
-       
-    }
-    catch(error)
-    {
-      console.error('Token verification failed : ', error);
+    console.log(
+      '[mooToYou Db jwtAuthGuard] is making request here to verify the token, I sent in headers from [JwtAuthGuard SecureNotify]',
+    );
+
+    try {
+      const accessSecret = this.configService.get<string>('JWT_ACCESS_SECRET');
+      console.log(
+        'Access Secret Used: ',
+        accessSecret ? 'Secret Available' : 'SECRET MISSING',
+      );
+      const decodeToken = this.jwtService.verify(accessToken, {
+        secret: accessSecret,
+      });
+
+      console.log('Decoded Token Structure : ', {
+        id: decodeToken.id,
+        role: decodeToken.role,
+        email: decodeToken.email,
+        iat: decodeToken.iat,
+      });
+
+      if (!decodeToken.id || !decodeToken.role) {
+        console.error('INVALID TOKEN STRUCTURE');
+        return null;
+      }
+
+      console.log('===== SNB TOKEN Verification SUCCESS =====');
+
+      return decodeToken;
+    } catch (error) {
+      console.error('===== SNB Token verification FAILED ===== ');
+      console.error('Verification Error: ', {
+        name: error.name,
+        messsage: error.message,
+        stack: error.stack,
+      });
       return null;
     }
-  
   }
 }

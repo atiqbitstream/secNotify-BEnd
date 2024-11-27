@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete , UseGuards, Req, Request} from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+  Request,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 // import { Request } from "express";
 import { User } from './entities/user.entity';
@@ -14,39 +25,36 @@ import { Public } from 'src/auth/decorators/public.decorator';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-
   @Public()
   @Post('signup')
-  async signUp(@Body() createUserDto:CreateUserDto,@Request() req)
-  {
-     return this.usersService.createUser(createUserDto);
+  async signUp(@Body() createUserDto: CreateUserDto, @Request() req) {
+    return this.usersService.createUser(createUserDto);
   }
-
 
   @UseGuards(RolesGuard)
   @Roles(ERole.ADMIN)
   @Post('createAsRider')
-  async createRider(@Body() createUserDto:CreateUserDto,@Request() req)
-  {
-     return this.usersService.createUser(createUserDto);
+  async createRider(@Body() createUserDto: CreateUserDto, @Request() req) {
+    return this.usersService.createUser(createUserDto);
   }
 
 
-@Get('profile')
-@UseGuards(RolesGuard)
-@Roles(ERole.ADMIN)
-getProfile(@Request() req):User
-{
-     return req.user;
-}
+  @UseGuards(JwtAuthGuard)
+  @Get('getAsRider/:id')
+  getRider(@Param('id') id: number) {
+    return this.usersService.getRider(id);
+  }
 
+  @Get('profile')
+  @UseGuards(RolesGuard)
+  @Roles(ERole.ADMIN)
+  getProfile(@Request() req): User {
+    return req.user;
+  }
 
-@Post('logout')
-logOut(@Request() req)
-{
-  console.log("req user obejct in controller =>",req.user)
-       return this.usersService.logoutUser(req.user);
-}
-
-
+  @Post('logout')
+  logOut(@Request() req) {
+    console.log('req user obejct in controller =>', req.user);
+    return this.usersService.logoutUser(req.user);
+  }
 }
