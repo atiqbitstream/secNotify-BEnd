@@ -33,5 +33,8 @@ export class Account {
     // @JoinColumn()
     // password2fa:Password2fa;
 
+    @Column({default:false})
+    isTest:boolean;
+
 }
 

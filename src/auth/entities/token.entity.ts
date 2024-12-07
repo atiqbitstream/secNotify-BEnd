@@ -24,6 +24,8 @@ export class Token {
     @ManyToOne(()=>User,(user)=>user.tokens)
      user:User;
 
+     @Column({default:false})
+     isTest:boolean;
     
 
 }

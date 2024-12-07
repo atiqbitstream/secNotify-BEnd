@@ -55,4 +55,6 @@ export class User {
   @JoinColumn()
      account:Account;
   
+     @Column({default:false})
+     isTest:boolean;
 }
