@@ -9,6 +9,7 @@ import {
   UseGuards,
   Req,
   Request,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 // import { Request } from "express";
@@ -39,10 +40,11 @@ export class UsersController {
   }
 
 
-
-  @Get('getAsRider/:id')
-  getRider(@Param('id') id: number) {
-    return this.usersService.getRider(id);
+   @UseGuards(RolesGuard)
+   @Roles(ERole.ADMIN)
+  @Get('getAsRider')
+  getRider(@Query('riderId') riderId:number, @Query('organizationId') organizationId:number) {
+    return this.usersService.getRider(riderId,organizationId);
   }
 
   @Get('profile')

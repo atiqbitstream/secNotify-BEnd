@@ -1,9 +1,9 @@
 import { CurrentUser } from './../auth/decorators/current-user.decorator';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Account } from 'src/auth/entities/account.entity';
@@ -123,10 +123,26 @@ export class UsersService {
    }
   }
 
-  getRider(id: number) {
-    return this.usersRepository.findOneBy({
-      id
+  getRider(riderId,organizationId) {
+   
+    if(!riderId || !organizationId)
+    {
+      throw new error('customerId and organizationId are required !')
+    }
+
+    const rider = this.usersRepository.findOne({
+      where:{
+        id:organizationId,
+        organizationId:organizationId
+      }
     })
+
+    if(!rider)
+    {
+      throw new NotFoundException(`Rider with id ${riderId} does not belong to organizationId ${organizationId}`)
+    }
+
+    return rider;
   }
 
   //this function is just for faker service to delete all created users
