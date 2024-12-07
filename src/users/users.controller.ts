@@ -39,7 +39,7 @@ export class UsersController {
   }
 
 
-  @UseGuards(JwtAuthGuard)
+
   @Get('getAsRider/:id')
   getRider(@Param('id') id: number) {
     return this.usersService.getRider(id);
