@@ -6,7 +6,7 @@ import { FakerModule } from './faker/faker.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
-import { RiderModule } from './rider/rider.module';
+
 
 @Module({
   imports: [UsersModule, AuthModule, FakerModule,
@@ -27,7 +27,6 @@ import { RiderModule } from './rider/rider.module';
       }),
       inject: [ConfigService],
     }),
-    RiderModule,
   ],
   // controllers: [AppController],
   providers: [AppService],
