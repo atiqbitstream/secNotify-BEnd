@@ -6,7 +6,7 @@ import { AuthService } from "./services/auth.service";
  import { response, Response } from 'express';
 
 import { CreateUserDto } from "src/users/dto/create-user.dto";
-import { TokenService } from './services/token.service';
+import { TokenService } from 'src/shared/services/token.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { HttpService } from '@nestjs/axios';
 import { JwtService } from '@nestjs/jwt';

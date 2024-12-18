@@ -7,16 +7,16 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { createTokenDto } from '../dtos/create-token.dto';
+import { createTokenDto } from 'src/auth/dtos/create-token.dto';
 import { addSeconds } from 'src/utils/dates';
-import { Token } from '../entities/token.entity';
+import { Token } from 'src/auth/entities/token.entity';
 import { LessThan } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { TokenRepository } from '../repos/token.repository';
 import { User } from '../../users/entities/user.entity';
-import { ETokenType } from '../enums/token-type.enum';
+import { ETokenType } from 'src/auth/enums/token-type.enum';
 import { DayInMilliseconds } from 'src/utils/constants';
-import { JwtToken } from '../dtos/jwt-token.dto';
+import { JwtToken } from 'src/auth/dtos/jwt-token.dto';
 import { promises } from 'dns';
 
 @Injectable()

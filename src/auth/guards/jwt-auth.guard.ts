@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
-import { TokenService } from '../services/token.service';
+import { TokenService } from 'src/shared/services/token.service';
 import { Reflector } from '@nestjs/core';
 
 @Injectable()

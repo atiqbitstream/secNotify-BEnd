@@ -8,7 +8,7 @@ import { Credentials } from '../dtos/auth-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Account } from '../entities/account.entity';
-import { TokenService } from './token.service';
+import { TokenService } from 'src/shared/services/token.service';
 import { UserDto } from 'src/users/dto/User.dto';
 import { UserLogin } from '../user-login';
 import { JwtPayload } from '../strategies/jwt.strategy';

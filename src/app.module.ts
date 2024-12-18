@@ -6,6 +6,7 @@ import { FakerModule } from './faker/faker.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
+import { SharedModule } from './shared/shared.module';
 
 
 @Module({
@@ -27,6 +28,7 @@ import { AuthModule } from './auth/auth.module';
       }),
       inject: [ConfigService],
     }),
+    SharedModule,
   ],
   // controllers: [AppController],
   providers: [AppService],
