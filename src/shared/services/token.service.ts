@@ -55,6 +55,8 @@ export class TokenService {
         id: user.id,
         role: user.role,
         email: user.email,
+        organization:user.organization,
+        organizationId:user.organizationId
       };
 
       const accessTokenDto = new createTokenDto(

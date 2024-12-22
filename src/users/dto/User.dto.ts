@@ -28,7 +28,7 @@ export class UserDto {
 
 
 
-  organizationId?: string;
+  organizationId?: number;
 
   organization:string
 

@@ -13,8 +13,9 @@ export class CreateUserDto {
   cnicNumber?: string;
   role: ERole;
   password: string;
-  organizationId: string;
+  organizationId: number;
   organization:string;
+  isTest:boolean;
 
 
 

@@ -20,6 +20,7 @@ import { ERole } from './enums/roles.enum';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Public } from 'src/auth/decorators/public.decorator';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('user')
@@ -39,12 +40,44 @@ export class UsersController {
     return this.usersService.createUser(createUserDto);
   }
 
-
    @UseGuards(RolesGuard)
-   @Roles(ERole.ADMIN)
+   @Roles(ERole.ADMIN,ERole.RIDER)
   @Get('getAsRider')
-  getRider(@Query('riderId') riderId:number, @Query('organizationId') organizationId:number) {
+  getRider(@Query('riderId') riderId:number, @Request() req) {
+
+   const organizationId = req.user.organizationId;
+    
     return this.usersService.getRider(riderId,organizationId);
+  }
+
+
+
+  
+  @UseGuards(RolesGuard)
+  @Roles(ERole.ADMIN, ERole.RIDER)
+  @Get('getAllRiders')
+  async getAllRidersByOrganization(
+    @Query('organizationId') organizationId: number,
+  ): Promise<User[]> {
+    return this.usersService.findAll(organizationId);
+  }
+
+  @Patch('updateRider/:id')
+  updateRider(@Param('id') id:number, @Body() updateRider:UpdateUserDto, @Request() req):Promise<User>
+  {
+      const organizationId = req.user.organizationId;
+
+      return this.usersService.update(id,organizationId,updateRider);
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles(ERole.ADMIN, ERole.RIDER)
+  @Delete('deleteRider/:id')
+  removeRider(@Param('id') id:number, @Request() req)
+  {
+     const organizationId= req.user.organizationId;
+
+     return this.usersService.remove(id,organizationId);
   }
 
   @Get('profile')

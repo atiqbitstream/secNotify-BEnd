@@ -42,7 +42,7 @@ export class User {
 
   @Column({ nullable: true })
 
-  organizationId?: string;
+  organizationId?: number;
 
   @Column({ nullable: true })
 
@@ -57,4 +57,8 @@ export class User {
   
      @Column({default:false})
      isTest:boolean;
+
+
+   @Column({default:false})
+   isDeleted:boolean;
 }
